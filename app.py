@@ -4,6 +4,8 @@ from flask import render_template
 import socket
 import random
 import os
+import requests
+  
 
 app = Flask(__name__)
 
@@ -26,6 +28,32 @@ def main():
     #return 'Hello'
     print(color)
     return render_template('hello.html', name=socket.gethostname(), color=color_codes[color])
+    # api-endpoint
+    URL = "http://maps.googleapis.com/maps/api/geocode/json"
+  
+    # location given here
+    location = "delhi technological university"
+
+    # defining a params dict for the parameters to be sent to the API
+    PARAMS = {'address':location}
+
+    # sending get request and saving the response as response object
+    r = requests.get(url = URL, params = PARAMS)
+
+    # extracting data in json format
+    data = r.json()
+
+
+    # extracting latitude, longitude and formatted address 
+    # of the first matching location
+    latitude = data['results'][0]['geometry']['location']['lat']
+    longitude = data['results'][0]['geometry']['location']['lng']
+    formatted_address = data['results'][0]['formatted_address']
+
+    # printing the output
+    print("Latitude:%s\nLongitude:%s\nFormatted Address:%s"
+          %(latitude, longitude,formatted_address))
+
 
 @app.route('/color/<new_color>')
 def new_color(new_color):
